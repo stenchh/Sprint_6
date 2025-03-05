@@ -1,54 +1,49 @@
-from selenium import webdriver
+import allure
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
+from pages.base_page import BasePage
 from pages.about_rent_page import AboutRentPage
-import pytest
 
-class OrderPage:
-    name_input = [By. XPATH, "//*[@id='root']/div/div[2]/div[2]/div[1]/input"]
-    surname_input = [By. XPATH, "//*[@id='root']/div/div[2]/div[2]/div[2]/input"]
-    address_input = [By.XPATH, "//*[@id='root']/div/div[2]/div[2]/div[3]/input"]
-    number_input = [By. XPATH, "//*[@id='root']/div/div[2]/div[2]/div[5]/input"]
-    button_next = [By.XPATH, "//*[@id='root']/div/div[2]/div[3]/button"]
-    logo_samokat = [By. XPATH, "//*[@id='root']/div/div[1]/div[1]/a[2]/img"]
-    metro_input = [By.XPATH, "//*[@id='root']/div/div[2]/div[2]/div[4]/div/div/input"]
+
+class OrderPage(BasePage):
+    name_input = [By.XPATH, "//input[@placeholder='* Имя']"]
+    surname_input = [By.XPATH, "//input[@placeholder='* Фамилия']"]
+    address_input = [By.XPATH, "//input[@placeholder='* Адрес: куда привезти заказ']"]
+    number_input = [By.XPATH, "//input[@placeholder='* Телефон: на него позвонит курьер']"]
+    button_next = [By.XPATH, "//button[text()='Далее']"]
+    logo_samokat = [By.XPATH, "//*[@id='root']/div/div[1]/div[1]/a[2]/img"]
+    metro_input = [By.XPATH, "//input[@placeholder='* Станция метро']"]
     metro_select = [By.XPATH, "//*[@class='select-search__select']"]
 
-
-    def __init__(self,driver):
-        self.driver = driver
+    def __init__(self, driver):
+        super().__init__(driver)
         self.about_rent_page = AboutRentPage(driver)
 
+    @allure.step('Ввод имени')
+    def input_valid_name(self, name):
+        self.input_text(self.name_input, name)
 
-    def input_valid_name(self, generate_name_or_surname):
-        name = generate_name_or_surname
-        self.driver.find_element(*self.name_input).send_keys(name)
+    @allure.step('Ввод фамилии')
+    def input_valid_surname(self, surname):
+        self.input_text(self.surname_input, surname)
 
-    def input_valid_surname(self, generate_name_or_surname):
-        surname = generate_name_or_surname
-        self.driver.find_element(*self.surname_input).send_keys(surname)
+    @allure.step('Ввод адреса доставки')
+    def input_valid_address(self, address):
+        self.input_text(self.address_input, address)
 
-    def input_valid_address(self,generate_address):
-        address = generate_address
-        self.driver.find_element(*self.address_input).send_keys(address)
-
+    @allure.step('Ввод станции метро')
     def input_metro_station(self):
-        self.driver.find_element(*self.metro_input).send_keys('Полянка')
-        WebDriverWait(self.driver, 5).until(expected_conditions.visibility_of_all_elements_located(self.metro_select))
-        self.driver.find_element(*self.metro_select).click()
+        self.input_text(self.metro_input, 'Полянка')
+        self.wait_until_visible(self.metro_select)
+        self.click_element(self.metro_select)
 
-    def input_valid_phone_number(self,generate_phone_number):
-        phone_number = generate_phone_number
-        self.driver.find_element(*self.number_input).send_keys(phone_number)
+    @allure.step('Ввод номера телефона')
+    def input_valid_phone_number(self, phone_number):
+        self.input_text(self.number_input, phone_number)
 
+    @allure.step('Клик по кнопке "Далее"')
     def click_next_button(self):
-        self.driver.find_element(*self.button_next).click()
-        WebDriverWait(self.driver, 3).until(expected_conditions.visibility_of_element_located(tuple(self.about_rent_page.date_input)))
+        self.click_and_wait(self.button_next, self.about_rent_page.date_input)
 
-
+    @allure.step('Клик по логотипу самоката')
     def click_samokat_logo(self):
-        self.driver.find_element(*self.logo_samokat).click()
-        WebDriverWait(self.driver, 3).until(expected_conditions.url_to_be('https://qa-scooter.praktikum-services.ru/'))
-
-
+        self.click_and_check_url_change(self.logo_samokat, 'https://qa-scooter.praktikum-services.ru/')

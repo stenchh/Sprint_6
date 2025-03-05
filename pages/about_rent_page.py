@@ -1,49 +1,42 @@
-from selenium import webdriver
+import allure
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
+from pages.base_page import BasePage
 
-class AboutRentPage:
-    date_input = [By.XPATH, "//*[@id='root']/div/div[2]/div[2]/div[1]/div[1]/div/input"]
-    calendar_day1 = [By.XPATH,"//*[@id='root']/div/div[2]/div[2]/div[1]/div[2]//div[contains(@class, 'react-datepicker__day') and text()='25']"]
-    calendar_day2 = [By.XPATH, "//*[@id='root'']/div/div[2]/div[2]/div[1]/div[2]/div[2]/div/div/div[2]/div[2]/div[6]/div[6]"]
-    lease_term_box = [By. XPATH, "//*[@id='root']/div/div[2]/div[2]/div[2]"]
+class AboutRentPage(BasePage):
+    date_input = [By.XPATH, "//input[@placeholder='* Когда привезти самокат']"]
+    lease_term_box = [By.CSS_SELECTOR, ".Dropdown-arrow"]
     time_menu = [By.XPATH, "//*[@id='root']/div/div[2]/div[2]/div[2]/div[2]"]
-    check_box_black = [By. XPATH, "//*[@id='root']/div/div[2]/div[2]/div[3]/label[1]"]
-    check_box_grey = [By.XPATH, "//*[@id='root']/div/div[2]/div[2]/div[3]/label[2]"]
-    order_button = [By. XPATH, "//*[@id='root']/div/div[2]/div[3]/button[2]"]
-    yes_button = [By. XPATH, "//*[@id='root']/div/div[2]/div[5]/div[2]/button[2]"]
+    check_box_black = [By.ID, "black"]
+    check_box_grey = [By.ID, "grey"]
+    order_button = [By.XPATH, "//button[text()='Заказать' and contains(@class, 'Button_Middle__1CSJM')]"]
+    yes_button = [By.XPATH, "//button[contains(text(), 'Да')]"]
+    status_button = [By.XPATH, "//button[text()='Посмотреть статус']"]
 
-    def __init__(self, driver):
-        self.driver = driver
+    @allure.step('Ввод даты через календарь')
+    def input_date_through_calendar(self, date):
+        self.input_text(self.date_input, date)
 
-
-
-    def input_date_through_caledar1(self):
-        date_input = self.driver.find_element(*self.date_input)
-        date_input.click()
-        WebDriverWait(self.driver, 5).until(expected_conditions.element_to_be_clickable(self.calendar_day1)).click()
-
-    def input_date_through_caledar2(self):
-        date_input = self.driver.find_element(*self.date_input)
-        date_input.click()
-        WebDriverWait(self.driver, 5).until(expected_conditions.element_to_be_clickable(self.calendar_day2)).click()
-
-    def set_the_lease_time(self):
-        self.driver.find_element(*self.lease_term_box).click()
+    @allure.step('Установка времени аренды')
+    def set_the_lease_time(self, index):
+        self.click_element(self.lease_term_box)
         options = self.driver.find_elements(*self.time_menu)
-        options[0].click()
+        options[index].click()
 
-
+    @allure.step('Выбор серого цвета')
     def set_grey_colour(self):
-        self.driver.find_element(*self.check_box_grey).click()
+        self.click_element(self.check_box_grey)
 
+    @allure.step('Выбор черного цвета')
     def set_black_colour(self):
-        self.driver.find_element(*self.check_box_black).click()
+        self.click_element(self.check_box_black)
 
+    @allure.step('Клик на кнопку "Заказать"')
     def click_order_button(self):
-        self.driver.find_element(*self.order_button).click()
-        WebDriverWait(self.driver, 3).until(expected_conditions.visibility_of_element_located(self.yes_button))
+        self.click_and_wait(self.order_button, self.yes_button)
 
+    @allure.step('Клик на кнопку "Да"')
     def click_yes_button(self):
-        self.driver.find_element(*self.yes_button).click()
+        self.click_and_wait(self.yes_button, self.status_button)
+
+
+
