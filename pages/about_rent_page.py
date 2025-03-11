@@ -5,7 +5,7 @@ from pages.base_page import BasePage
 class AboutRentPage(BasePage):
     date_input = [By.XPATH, "//input[@placeholder='* Когда привезти самокат']"]
     lease_term_box = [By.CSS_SELECTOR, ".Dropdown-arrow"]
-    time_menu = [By.XPATH, "//*[@id='root']/div/div[2]/div[2]/div[2]/div[2]"]
+    time_menu = [By.CSS_SELECTOR, ".Dropdown-option"]
     check_box_black = [By.ID, "black"]
     check_box_grey = [By.ID, "grey"]
     order_button = [By.XPATH, "//button[text()='Заказать' and contains(@class, 'Button_Middle__1CSJM')]"]
@@ -19,8 +19,8 @@ class AboutRentPage(BasePage):
     @allure.step('Установка времени аренды')
     def set_the_lease_time(self, index):
         self.click_element(self.lease_term_box)
-        options = self.driver.find_elements(*self.time_menu)
-        options[index].click()
+        self.find_and_click(self.time_menu, index)
+
 
     @allure.step('Выбор серого цвета')
     def set_grey_colour(self):
@@ -38,5 +38,6 @@ class AboutRentPage(BasePage):
     def click_yes_button(self):
         self.click_and_wait(self.yes_button, self.status_button)
 
-
-
+    @allure.step('Проверка отображения кнопки "Посмотреть статус"')
+    def is_status_button_displayed(self):
+        return self.find_element(self.status_button).is_displayed()

@@ -10,9 +10,9 @@ class OrderPage(BasePage):
     address_input = [By.XPATH, "//input[@placeholder='* Адрес: куда привезти заказ']"]
     number_input = [By.XPATH, "//input[@placeholder='* Телефон: на него позвонит курьер']"]
     button_next = [By.XPATH, "//button[text()='Далее']"]
-    logo_samokat = [By.XPATH, "//*[@id='root']/div/div[1]/div[1]/a[2]/img"]
+    logo_samokat = [By.CSS_SELECTOR, "img[alt='Scooter']"]
     metro_input = [By.XPATH, "//input[@placeholder='* Станция метро']"]
-    metro_select = [By.XPATH, "//*[@class='select-search__select']"]
+    metro_select = [By.CSS_SELECTOR, ".select-search__select"]
 
     def __init__(self, driver):
         super().__init__(driver)
@@ -46,4 +46,5 @@ class OrderPage(BasePage):
 
     @allure.step('Клик по логотипу самоката')
     def click_samokat_logo(self):
-        self.click_and_check_url_change(self.logo_samokat, 'https://qa-scooter.praktikum-services.ru/')
+        self.click_element(self.logo_samokat)
+        return self.get_current_url()

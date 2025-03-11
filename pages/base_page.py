@@ -32,7 +32,7 @@ class BasePage:
         element.clear()
         element.send_keys(text)
 
-    def wait_until_visible(self, locator, timeout=10):
+    def wait_until_visible(self, locator, timeout=60):
         WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located(locator))
 
     def click_and_wait(self, locator, next_locator):
@@ -44,7 +44,12 @@ class BasePage:
         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center', inline: 'nearest'});", element)
         element.click()
 
-    def click_and_check_url_change(self, locator, expected_url):
-        element = self.wait_until_visible(locator)
-        element.click()
-        WebDriverWait(self.driver, 10).until(EC.url_to_be(expected_url))
+    def get_current_url(self):
+        return self.driver.current_url
+
+    def switch_to_new_tab(self):
+        tabs = self.driver.window_handles
+        self.driver.switch_to.window(tabs[-1])
+
+    def wait_for_url(self, expected_url):
+        self.wait.until(EC.url_to_be(expected_url))

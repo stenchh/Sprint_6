@@ -36,7 +36,7 @@ class TestCreateOrder:
         about_rent_page.click_order_button()
         about_rent_page.click_yes_button()
 
-        assert about_rent_page.find_element(about_rent_page.status_button).is_displayed()
+        assert about_rent_page.is_status_button_displayed()
 
     @allure.title('Тестирование создания заказа с черным цветом самоката')
     @allure.description('Проверка процесса создания заказа с выбором черного цвета самоката')
@@ -53,7 +53,7 @@ class TestCreateOrder:
         about_rent_page = AboutRentPage(driver)
 
 
-        main_page.click_upper_order_button()
+        main_page.click_lower_order_button()
         order_page.input_valid_name(name)
         order_page.input_valid_surname(name)
         order_page.input_valid_address(address)
@@ -68,4 +68,4 @@ class TestCreateOrder:
         about_rent_page.click_order_button()
         about_rent_page.click_yes_button()
 
-        assert about_rent_page.find_element(about_rent_page.status_button).is_displayed()
+        assert about_rent_page.is_status_button_displayed()

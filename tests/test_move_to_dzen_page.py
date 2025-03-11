@@ -11,5 +11,4 @@ class TestMoveDzenPage:
 
         current_url = main_page.click_on_logo()
 
-
         assert current_url == 'https://dzen.ru/?yredirect=true'
